@@ -2,57 +2,13 @@
 
 #include "./../include/grafo.hpp"
 
-Aresta::Aresta(size_t vertice,
-               size_t capacidade,
-               char categoria) : v(vertice),
-                                 cap(capacidade),
-                                 fluxo(0),
-                                 cat(categoria) {}
-
-Aresta::Aresta(size_t vertice,
-               size_t capacidade,
-               char categoria,
-               std::vector<Aresta>::iterator rev) : v(vertice),
-                                                    cap(capacidade),
-                                                    fluxo(capacidade),
-                                                    cat(categoria),
-                                                    aresta_rev(rev) {}
-
-void Aresta::add_fluxo(size_t qtd)
-{
-    if (qtd + fluxo > cap)
-    {
-        throw std::invalid_argument("Fluxo maior do que a capacidade");
-    }
-
-    fluxo += qtd;
-}
-
-void Aresta::sub_fluxo(size_t qtd)
-{
-    if (qtd > fluxo)
-    {
-        throw std::invalid_argument("Fluxo maior do que o já existente");
-    }
-
-    fluxo -= qtd;
-}
+Aresta::Aresta(size_t vertice, char categoria) : v(vertice), cat(categoria) {}
 
 // -------
 
-std::vector<Aresta>::iterator Vertice::add_aresta(size_t vertice,
-                         size_t capacidade,
-                         char categoria)
+void Vertice::add_aresta(size_t vertice, char categoria)
 {
-    arestas.push_back(Aresta(vertice, capacidade, categoria));
-}
-
-void Vertice::add_aresta(size_t vertice,
-                         size_t capacidade,
-                         char categoria,
-                         std::vector<Aresta>::iterator rev)
-{
-    arestas.push_back(Aresta(vertice, capacidade, categoria, rev));
+    arestas.push_back(Aresta(vertice, categoria));
 }
 
 Aresta &Vertice::operator[](size_t i)
@@ -72,9 +28,36 @@ std::vector<Aresta>::iterator Vertice::end()
 
 // -------
 
+Fluxo::Fluxo(size_t capacidade,
+             size_t fluxo_inicial) : cap(capacidade),
+                                     fluxo(fluxo_inicial) {}
+
+void Fluxo::add_fluxo(size_t val)
+{
+    if (val + fluxo > cap)
+    {
+        throw std::invalid_argument("Fluxo maior do que a capacidade");
+    }
+
+    fluxo += val;
+}
+
+void Fluxo::sub_fluxo(size_t val)
+{
+    if (val > fluxo)
+    {
+        throw std::invalid_argument("Fluxo maior do que o já existente");
+    }
+
+    fluxo -= val;
+}
+
+// -------
+
 Grafo::Grafo(size_t n_v) : n_vertices(n_v)
 {
     vertices.assign(n_v, Vertice());
+    fluxo.assign(n_v, std::vector<Fluxo>(n_v, Fluxo()));
 }
 
 void Grafo::add_aresta(size_t v1,
@@ -82,16 +65,10 @@ void Grafo::add_aresta(size_t v1,
                        size_t capacidade,
                        char categoria)
 {
-    vertices[v1].add_aresta(v2, capacidade, categoria);
-}
-
-void Grafo::add_aresta(size_t v1,
-                       size_t v2,
-                       size_t capacidade,
-                       char categoria,
-                       std::vector<Aresta>::iterator rev)
-{
-    vertices[v1].add_aresta(v2, capacidade, categoria, rev);
+    vertices[v1].add_aresta(v2, categoria);
+    vertices[v2].add_aresta(v1, 'r');
+    fluxo[v1][v2] = Fluxo(capacidade);
+    fluxo[v2][v1] = Fluxo(capacidade, capacidade);
 }
 
 Vertice &Grafo::operator[](size_t i)

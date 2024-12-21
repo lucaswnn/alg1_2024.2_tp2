@@ -8,20 +8,13 @@ class Aresta
 {
 public:
     size_t v;
-    size_t cap;
-    size_t fluxo;
     char cat;
-    std::vector<Aresta>::iterator aresta_rev;
 
+    // construtor padrão
     Aresta() = default;
 
-    Aresta(size_t vertice, size_t capacidade, char categoria);
-
-    Aresta(size_t vertice, size_t capacidade, char categoria, std::vector<Aresta>::iterator rev);
-
-    void add_fluxo(size_t qtd);
-
-    void sub_fluxo(size_t qtd);
+    // construtor com o ID do vértice e a categoria
+    Aresta(size_t vertice, char categoria);
 };
 
 // classe que simboliza um vértice de um grafo
@@ -30,20 +23,38 @@ class Vertice
 public:
     std::vector<Aresta> arestas;
 
-    std::vector<Aresta>::iterator add_aresta(size_t vertice,
-                    size_t capacidade,
-                    char categoria);
+    // método para adicionar arestas
+    void add_aresta(size_t vertice, char categoria);
 
-    void add_aresta(size_t vertice,
-                    size_t capacidade,
-                    char categoria,
-                    std::vector<Aresta>::iterator rev);
-
+    // override do operador [] para acessar as arestas
     Aresta &operator[](size_t i);
 
+    // método para iterar em loop
     std::vector<Aresta>::iterator begin();
 
+    // método para iterar em loop
     std::vector<Aresta>::iterator end();
+};
+
+// classe que simboliza o fluxo de uma aresta
+class Fluxo
+{
+public:
+    size_t cap;
+    size_t fluxo;
+
+    // construtor padrão
+    Fluxo() = default;
+
+    // construtor com a capacidade e fluxo inicial
+    // fluxo inicial usado para produzir arestas reversas
+    Fluxo(size_t capacidade, size_t fluxo_inicial = 0);
+
+    // método para adicionar fluxo
+    void add_fluxo(size_t val);
+
+    // método para reduzir fluxo de arestas reversas
+    void sub_fluxo(size_t val);
 };
 
 // classe que simboliza um grafo por meio de lista de adjacências
@@ -52,30 +63,28 @@ class Grafo
 public:
     size_t n_vertices;
     std::vector<Vertice> vertices;
+    std::vector<std::vector<Fluxo>> fluxo;
 
     // construtor que reserva um número inicial de vértices
     Grafo(size_t n_vertices);
 
     // método que adiciona uma nova aresta de acordo com a categoria
     // 'o': original
-    // 'r': reverso
     // 's': de origem
     // 't': de destino
+    // 'r': de reverso
     void add_aresta(size_t v1,
                     size_t v2,
                     size_t capacidade,
                     char categoria);
 
-    void add_aresta(size_t v1,
-                    size_t v2,
-                    size_t capacidade,
-                    char categoria,
-                    std::vector<Aresta>::iterator rev);
-
+    // override do operador [] para acessar os vértices
     Vertice &operator[](size_t i);
 
+    // método para iterar em loop
     std::vector<Vertice>::iterator begin();
 
+    // método para iterar em loop
     std::vector<Vertice>::iterator end();
 };
 

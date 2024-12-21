@@ -2,6 +2,7 @@
 #include <limits>
 
 #include "./../include/grafo.hpp"
+#include "./../include/algoritmos.hpp"
 
 Grafo carregar_entrada()
 {
@@ -20,13 +21,10 @@ Grafo carregar_entrada()
         if (demanda == 0)
         {
             grafo.add_aresta(0, v, max, 's');
-            
-            grafo.add_aresta(v, 0, max, max, 'r');
         }
         else
         {
             grafo.add_aresta(v, n_vertices + 1, demanda, 't');
-            grafo.add_aresta(n_vertices + 1, v, demanda, demanda, 'r');
         }
     }
 
@@ -35,7 +33,6 @@ Grafo carregar_entrada()
         size_t v1, v2, cap;
         std::cin >> v1 >> v2 >> cap;
         grafo.add_aresta(v1, v2, cap, 'o');
-        grafo.add_aresta(v2, v1, cap, cap, 'r');
     }
 
     return grafo;
@@ -43,6 +40,10 @@ Grafo carregar_entrada()
 
 int main()
 {
+    // carrega a entrada do problema
     auto grafo = carregar_entrada();
+
+    // atualiza o grafo com o fluxo a partir do algoritmo de Ford-Fulkerson
+    alg::ford_fulkerson(grafo);
     return 0;
 }

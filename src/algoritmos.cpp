@@ -2,29 +2,34 @@
 
 #include "./../include/algoritmos.hpp"
 
-CamadaBFS::CamadaBFS(size_t el, size_t pos, std::vector<Aresta>::iterator it)
+CamadaBFS::CamadaBFS(size_t el, size_t ant, size_t pos)
 {
-    el_pos_it.push_back({el, pos, it});
+    el_ant_pos.push_back({el, ant, pos});
 }
 
-void CamadaBFS::add_elemento(size_t el, size_t pos, std::vector<Aresta>::iterator it)
+void CamadaBFS::add_elemento(size_t el, size_t ant, size_t pos)
 {
-    el_pos_it.push_back({el, pos, it});
+    el_ant_pos.push_back({el, ant, pos});
 }
 
-std::tuple<size_t, size_t, std::vector<Aresta>::iterator> &CamadaBFS::operator[](size_t i)
+std::tuple<size_t, size_t, size_t> &CamadaBFS::operator[](size_t i)
 {
-    return el_pos_it[i];
+    return el_ant_pos[i];
 }
 
-std::vector<std::tuple<size_t, size_t, std::vector<Aresta>::iterator>>::iterator CamadaBFS::begin()
+std::vector<std::tuple<size_t, size_t, size_t>>::iterator CamadaBFS::begin()
 {
-    return el_pos_it.begin();
+    return el_ant_pos.begin();
 }
 
-std::vector<std::tuple<size_t, size_t, std::vector<Aresta>::iterator>>::iterator CamadaBFS::end()
+std::vector<std::tuple<size_t, size_t, size_t>>::iterator CamadaBFS::end()
 {
-    return el_pos_it.end();
+    return el_ant_pos.end();
+}
+
+size_t CamadaBFS::size() const
+{
+    return el_ant_pos.size();
 }
 
 // -------
@@ -34,51 +39,69 @@ CamadaBFS &CaminhoBFS::operator[](size_t i)
     return camadas[i];
 }
 
-std::vector<std::vector<Aresta>::iterator>::iterator CaminhoBFS::begin()
+std::vector<std::pair<size_t, size_t>>::iterator CaminhoBFS::begin()
 {
     return caminho.begin();
 }
 
-std::vector<std::vector<Aresta>::iterator>::iterator CaminhoBFS::end()
+std::vector<std::pair<size_t, size_t>>::iterator CaminhoBFS::end()
 {
     return caminho.end();
 }
 
-void CaminhoBFS::encontrar_caminho(Grafo &grafo)
+bool CaminhoBFS::encontrar_caminho(Grafo &grafo)
 {
     size_t s = 0, t = grafo.n_vertices - 1;
     std::vector<char> descoberto(grafo.n_vertices, 0);
     descoberto[s] = 1;
-    camadas.push_back(CamadaBFS({s, s, grafo[s].begin()}));
+    camadas.push_back(CamadaBFS({s, s, s}));
     size_t camada = 0;
 
+    // interrompe o algoritmo quando o vértice t é encontrado
     while (!descoberto[t])
     {
+        // se na próxima iteração a camada corrente estiver vazia
+        // significa que a BFS não encontrou o vértice t
+        if (camadas[camada].size() == 0)
+        {
+            return false;
+        }
+
         camadas.push_back(CamadaBFS());
 
+        // buffer para posição do antecessor de v na camada anterior
         size_t pos = 0;
+
+        t_pos = 0;
         for (auto &u_tupla : camadas[camada])
         {
             size_t u = std::get<0>(u_tupla);
-            for (auto u_v_it = grafo[u].begin(); u_v_it != grafo[u].end(); u_v_it++)
+            for (auto u_v : grafo[u])
             {
-                auto &u_v = *u_v_it;
-                if (u_v.cap == u_v.fluxo)
+                size_t v = u_v.v;
+                auto &fluxo_u_v = grafo.fluxo[u][v];
+
+                // aresta com fluxo cheio
+                if (fluxo_u_v.cap == fluxo_u_v.fluxo)
                 {
                     continue;
                 }
 
-                if (!descoberto[u_v.v])
+                if (!descoberto[v])
                 {
-                    descoberto[u_v.v] = 1;
-                    camadas[camada + 1].add_elemento(u_v.v, pos, u_v_it);
-                    if (u_v.v == t)
+                    descoberto[v] = 1;
+                    camadas[camada + 1].add_elemento(v, u, pos);
+
+                    // interrompe o algoritmo ao descobrir o vértice t
+                    if (v == t)
                     {
-                        t_pos = pos;
                         break;
                     }
+                    t_pos++;
                 }
             }
+
+            // interrompe o algoritmo ao descobrir o vértice t
             if (descoberto[t])
             {
                 break;
@@ -90,57 +113,65 @@ void CaminhoBFS::encontrar_caminho(Grafo &grafo)
     }
 
     _montar_caminho();
+    return true;
 }
 
 void CaminhoBFS::_montar_caminho()
 {
-    std::vector<std::vector<Aresta>::iterator> caminho_rev;
+    std::vector<std::pair<size_t, size_t>> caminho_rev;
+    // inicializa iterador com a última camada da BFS
     auto camada_it = camadas.rbegin();
+
+    // pega o item da camada (v, u, posição do antecessor na camada anterior)
     auto camada_el = (*camada_it)[t_pos];
-    caminho_rev.push_back(std::get<2>(camada_el));
+
+    size_t u = std::get<1>(camada_el), v = std::get<0>(camada_el);
+    caminho_rev.push_back({u, v});
+
+    size_t ant_pos = std::get<2>(camada_el);
     camada_it++;
 
-    while (camada_it != camadas.rend())
+    // itera nas camadas de trás para frente
+    while (camada_it != (camadas.rend() - 1))
     {
-        size_t el_pos = std::get<1>(camada_el);
-        camada_el = (*camada_it)[el_pos];
-        caminho_rev.push_back(std::get<2>(camada_el));
+        camada_el = (*camada_it)[ant_pos];
+
+        u = std::get<1>(camada_el), v = std::get<0>(camada_el);
+        caminho_rev.push_back({u, v});
+
+        ant_pos = std::get<2>(camada_el);
         camada_it++;
     }
 
-    caminho = std::vector<std::vector<Aresta>::iterator>(caminho_rev.rbegin(), caminho_rev.rend());
+    // inverte o vetor de caminho processado
+    caminho = std::vector<std::pair<size_t, size_t>>(caminho_rev.rbegin(), caminho_rev.rend());
 }
 
 // -------
 
-void alg::aumentar_caminho(CaminhoBFS &caminho)
+void alg::aumentar_caminho(Grafo &grafo, CaminhoBFS &caminho)
 {
+    // encontra o gargalo do caminho
     size_t gargalo = std::numeric_limits<size_t>::max();
-    for (const auto &aresta_it : caminho)
+    for (const auto &aresta : caminho)
     {
-        auto &aresta = *aresta_it;
-        size_t balanco = aresta.cap - aresta.fluxo;
+        size_t u = aresta.first, v = aresta.second;
+        auto &fluxo = grafo.fluxo[u][v];
+        size_t balanco = fluxo.cap - fluxo.fluxo;
         if (balanco < gargalo)
         {
             gargalo = balanco;
         }
     }
 
-    for (const auto &aresta_it : caminho)
+    // altera o fluxo do caminho
+    for (const auto &aresta : caminho)
     {
-        auto &aresta = *aresta_it;
-        aresta.add_fluxo(gargalo);
-
-        if (aresta.cat == 'o')
-        {
-            auto &aresta_rev = *(aresta_it + 1);
-            aresta_rev.sub_fluxo(gargalo);
-        }
-        else
-        {
-            auto &aresta_rev = *(aresta_it - 1);
-            aresta_rev.sub_fluxo(gargalo);
-        }
+        size_t u = aresta.first, v = aresta.second;
+        auto &fluxo = grafo.fluxo[u][v];
+        auto &fluxo_rev = grafo.fluxo[v][u];
+        fluxo.add_fluxo(gargalo);
+        fluxo_rev.sub_fluxo(gargalo);
     }
 }
 
@@ -149,11 +180,11 @@ void alg::ford_fulkerson(Grafo &grafo)
     while (true)
     {
         CaminhoBFS caminho;
-        caminho.encontrar_caminho(grafo);
-        if (caminho.camadas.size() == 1)
+        bool tem_caminho = caminho.encontrar_caminho(grafo);
+        if (!tem_caminho)
         {
             break;
         }
-        aumentar_caminho(caminho);
+        aumentar_caminho(grafo, caminho);
     }
 }
