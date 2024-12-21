@@ -67,8 +67,20 @@ void Grafo::add_aresta(size_t v1,
 {
     vertices[v1].add_aresta(v2, categoria);
     vertices[v2].add_aresta(v1, 'r');
-    fluxo[v1][v2] = Fluxo(capacidade);
-    fluxo[v2][v1] = Fluxo(capacidade, capacidade);
+
+    size_t cap_inicial = fluxo[v1][v2].cap;
+    if (cap_inicial == 0)
+    {
+        fluxo[v2][v1] = Fluxo(capacidade, capacidade);
+        fluxo[v1][v2] = Fluxo(capacidade);
+    }
+}
+
+void Grafo::add_capacidade(size_t u, size_t v, size_t val)
+{
+    fluxo[u][v].cap += val;
+    fluxo[v][u].cap += val;
+    fluxo[v][u].fluxo += val;
 }
 
 Vertice &Grafo::operator[](size_t i)

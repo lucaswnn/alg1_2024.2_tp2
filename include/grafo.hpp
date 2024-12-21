@@ -72,11 +72,14 @@ public:
     // 'o': original
     // 's': de origem
     // 't': de destino
-    // 'r': de reverso
+    // 'r': reverso
     void add_aresta(size_t v1,
                     size_t v2,
                     size_t capacidade,
                     char categoria);
+    
+    // método para incrementar a capacidade de uma aresta
+    void add_capacidade(size_t u, size_t v, size_t val);
 
     // override do operador [] para acessar os vértices
     Vertice &operator[](size_t i);

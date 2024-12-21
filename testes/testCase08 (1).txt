@@ -1,25 +1,8 @@
-Algard
-21
-Grungroick
-Ciliren
-Belozersk
-Rodograd
-Saragar
-Ghonumi
-Lysidamus
-Tummoserd
-Kelra
-Audun
-Vezgaxur
-Ciradyl
-Naesala
-Ayr
-Novorzhev
-Briones
-Thrarseat
-Sarkalli
-Lyari
-Durendreg
-Seldiroh
-1
-Algard Folkestone Algard Grima Algard Margate
+114
+56
+7
+4
+1 9 27
+1 7 7
+2 6 3
+3 4 21

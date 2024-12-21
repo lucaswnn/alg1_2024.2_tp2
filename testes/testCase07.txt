@@ -1,85 +1,29 @@
-21 84
-Solacia Krieger
-Solacia Guildingston
-Solacia Enia
-Solacia Derban
-Krieger Solacia
-Krieger Guildingston
-Krieger Enia
-Krieger Derban
-Guildingston Solacia
-Guildingston Krieger
-Guildingston Enia
-Guildingston Derban
-Enia Solacia
-Enia Krieger
-Enia Guildingston
-Enia Derban
-Derban Solacia
-Derban Krieger
-Derban Guildingston
-Derban Enia
-Tsabit Lumena
-Tsabit Palor
-Tsabit Yldstead
-Tsabit Scunthorpe
-Lumena Tsabit
-Lumena Palor
-Lumena Yldstead
-Lumena Scunthorpe
-Palor Tsabit
-Palor Lumena
-Palor Yldstead
-Palor Scunthorpe
-Yldstead Tsabit
-Yldstead Lumena
-Yldstead Palor
-Yldstead Scunthorpe
-Scunthorpe Tsabit
-Scunthorpe Lumena
-Scunthorpe Palor
-Scunthorpe Yldstead
-Sakerson Padserae
-Sakerson Eastmeet
-Sakerson Veritas
-Sakerson Omura
-Padserae Sakerson
-Padserae Eastmeet
-Padserae Veritas
-Padserae Omura
-Eastmeet Sakerson
-Eastmeet Padserae
-Eastmeet Veritas
-Eastmeet Omura
-Veritas Sakerson
-Veritas Padserae
-Veritas Eastmeet
-Veritas Omura
-Omura Sakerson
-Omura Padserae
-Omura Eastmeet
-Omura Veritas
-Chambery Nox
-Chambery Cara
-Chambery Westhall
-Chambery Luthyia
-Nox Chambery
-Nox Cara
-Nox Westhall
-Nox Luthyia
-Cara Chambery
-Cara Nox
-Cara Westhall
-Cara Luthyia
-Westhall Chambery
-Westhall Nox
-Westhall Cara
-Westhall Luthyia
-Luthyia Chambery
-Luthyia Nox
-Luthyia Cara
-Luthyia Westhall
-Notrent Solacia
-Notrent Tsabit
-Notrent Sakerson
-Notrent Chambery
+12 16
+1 0
+2 0
+3 45
+4 10
+5 45
+6 40
+7 30
+8 20
+9 15
+10 50
+11 30
+12 10
+1 10 22
+1 11 32
+1 7 8
+1 5 19
+1 6 39
+2 9 3
+2 3 46
+2 12 39
+6 5 24
+6 8 4
+7 9 40
+12 5 29
+10 9 32
+8 7 41
+9 6 26
+11 3 7
