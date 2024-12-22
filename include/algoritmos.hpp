@@ -1,6 +1,7 @@
 #ifndef _ALGORITMOS_
 #define _ALGORITMOS_
 
+#include <cstddef>
 #include <tuple>
 
 #include "./../include/grafo.hpp"
